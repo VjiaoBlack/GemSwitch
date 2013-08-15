@@ -1,39 +1,51 @@
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 
-public class Gem {
+
+public class Gem{
 	
-	private static int[][] SLIDE = {
-		{-1,  0, 1, 0, 0, 0, 0, 0, 0},
-		{ 0, -1, 0, 0, 0, 0, 0, 0, 1}
-	};
-	private static final int SIZE = 48;
+	private static final int SIZE = 64;
+	private static final int SPEED = 4;
 	
-	private static final HashMap<String,Image> IMAGES = new HashMap<String,Image>();
-	
+	private static final HashMap<String,BufferedImage> IMAGES = new HashMap<String,BufferedImage>();
+	private static final String[] TYPES = {"ruby", "sapphire", "emerald", "topaz", "diamond"};
 	
 	private String _type;
 	private int _xGridCor, _yGridCor;
-	private double _xCor, _yCor, _yVel;
+	private double _xOffset, _yOffset, _yVel, _xVel;
 	private boolean _isFalling, _onGrid;
-	private int _sliding;
+	private int _sliding; //-1, 0N, 1E, 2S, 3W
 	
-	public void setup(){
-		Image placeholder = null;
-		IMAGES.put("ruby", placeholder);
-		IMAGES.put("sapphire", placeholder);
-		IMAGES.put("emerald", placeholder);
-		IMAGES.put("topaz", placeholder);
-		IMAGES.put("diamond", placeholder);
+	public static void setup(){
+		BufferedImage ruby = null, sapphire = null, emerald = null,
+					  topaz = null, diamond = null;
+		try {
+		    ruby = ImageIO.read(new File("res/ruby.png"));
+		    sapphire = ImageIO.read(new File("res/sapphire.png"));
+		    emerald = ImageIO.read(new File("res/emerald.png"));
+		    topaz = ImageIO.read(new File("res/shield.png"));
+		    diamond = ImageIO.read(new File("res/diamond.png"));
+		} catch (IOException e) {
+			System.out.println("Image imports broken");
+		}
+		IMAGES.put("ruby", ruby);
+		IMAGES.put("sapphire", sapphire);
+		IMAGES.put("emerald", emerald);
+		IMAGES.put("topaz", topaz);
+		IMAGES.put("diamond", diamond);
 	}
 	
-	public Gem(int x, String type){
+	public Gem(int x, int y, String type){
 		_type = type;
 		_xGridCor = x;
-		_yGridCor = 0 /* help */;
-		_yVel = 4;
+		_yGridCor = y /* help */;
+		_yVel = 0;
 		_isFalling = true;
 		_onGrid = false;
 		_sliding = -1;
@@ -47,47 +59,64 @@ public class Gem {
 		return _yGridCor;
 	}
 	
+	public static String getType(int pos){
+		return TYPES[pos];
+	}
+	
 	public void draw(Graphics2D g){
 		g.drawImage(IMAGES.get(_type),
-				   /*xgridoffset +*/ _xGridCor * SIZE, /*ygridoffset +*/ _yGridCor * SIZE,
-				   /*xgridoffset +*/ (_xGridCor + 1) * SIZE, /*ygridoffset +*/ (_yGridCor + 1) * SIZE,
-			       0, 0, 48, 48,									//check this, is the max x/y 48??
+				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE, 
+				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE,
+				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE, 
+				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE,
+			       0, 0, 16, 16,
 			       null);
-			// get the texture from the static hashmap of textures, then draw it with xcor and ycor
 	}
 	
 	public void update(){
+		_yOffset += _yVel;
+		_xOffset += _xVel;
 		if (_isFalling) {
-			_yCor += _yVel;
-			
-			
+			_yVel = 4;		
 		}
 		
-		if (_isFalling && _yCor <= _yGridCor * SIZE + _yVel /* + gridoffset */){
+		if (_isFalling && _yOffset + _yVel >= _yGridCor * SIZE + Board.TOP_BORDER_HEIGHT + 
+											  Board.TOP_MARGIN_HEIGHT){
 			_isFalling = false;
-			_yCor = _yGridCor * SIZE /* + gridoffset */;
+			_yOffset = 0;
 		}
 		
 		if (_sliding != -1) {
-			
-			
-			
-		} else {
-			
+			switch(_sliding){
+				case 0 :
+					_yVel = -4;
+					break;
+				case 1 :
+					_xVel = 4;
+					break;
+				case 2 :
+					_yVel = 4;
+					break;
+				case 3 :
+					_xVel = -4;
+					break;
+			}
+			if (_yOffset == 0 && _xOffset == 0)
+				_sliding = -1;
 		}
 	}
 	
-	public void swap(Gem target){
-		int dX = target.getXGridCor() - _xGridCor;
-		int dY = target.getYGridCor() - _yGridCor;
-		
-		dX += 1;  // 0, 2
-		dY += 2;  // 1, 3
-		dX = (int) Math.pow(2,dX); // 1, 4
-		dY = (int) Math.pow(2,dY); // 2, 8
-
-		_sliding = dX + dY; // up: 1  down: 8  left: 0  right: 2
-						   // note that there is no other combination of dX and dY to get 0, 1, 2, or 8
-		
+	public void swapUp(){
+		_sliding = 0;
 	}
+	public void swapDown(){
+		_sliding = 2;
+	}
+	public void swapLeft(){
+		_sliding = 3;
+	}
+	public void swapRight(){
+		_sliding = 1;
+	}
+
 }
