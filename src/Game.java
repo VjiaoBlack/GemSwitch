@@ -14,8 +14,9 @@ public class Game {
 		
 		JFrame f = new JFrame();
 		f.setTitle("GemSwap");
-		f.setSize(720, 744);
+		f.setSize(720, 808);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setResizable(false);
 		f.add(_board);
 		f.setVisible(true);
 		

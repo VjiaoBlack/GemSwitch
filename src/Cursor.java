@@ -21,16 +21,10 @@ public class Cursor {
 			System.out.println("Cursor image import broken");
 		}
 		_xGridCor = 2;
-		_yGridCor = 4;
+		_yGridCor = 3;
 		_xOffset = _yOffset = _yVel = _xVel = 0;
 	}
 	
-	public void setXGridCor(int x){
-		_xGridCor = x;
-	}
-	public void setYGridCor(int y){
-		_yGridCor = y;
-	}
 	
 	public void draw(Graphics2D g){
 		g.drawImage(CURSOR,
@@ -38,7 +32,18 @@ public class Cursor {
 				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE,
 				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH + (_xGridCor + 1) * SIZE, 
 				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE,
-			       0, 0, SIZE, SIZE,
+			       0, 0, 16, 16,
 			       null);
+		
+	}
+
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setGridCor(int x, int y) {
+		_xGridCor = x;
+		_yGridCor = y;
 	}
 }

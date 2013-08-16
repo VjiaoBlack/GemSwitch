@@ -6,13 +6,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 
-public class Grid implements KeyListener, MouseListener, MouseMotionListener{
+public class Grid{
 	public static int GRID_WIDTH;
 	public static int GRID_HEIGHT;
 	
 	public Gem[][] _grid;
-	
-	private int _cursorX, _cursorY;
 	
 	public Grid(int _width, int _height){
 		GRID_WIDTH = _width;
@@ -26,9 +24,12 @@ public class Grid implements KeyListener, MouseListener, MouseMotionListener{
 		
 	}
 	
-	public void update(int x1, int y1, int x2, int y2){
-		//remember: only update when a swap is made.
-		//check the 2 gems that were updated
+	public void update(){
+		for(int x = 0; x < GRID_WIDTH; x++){
+			for(int y = 0; y < GRID_HEIGHT; y++){
+				_grid[x][y].update();
+			}
+		}
 	}
 	
 	public void draw(Graphics2D g){
@@ -38,68 +39,20 @@ public class Grid implements KeyListener, MouseListener, MouseMotionListener{
 			}
 		}
 	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
+	public void setGem(Gem a, int x, int y){
+		_grid[x][y] = a;
+	}
+	public Gem getGem(int x, int y){
+		return _grid[x][y];
 	}
 
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-		
-		System.out.println(x);
+	public void switchGems(int x1, int y1, int x2, int y2){
+		Gem temp = _grid[x1][y1];
+		_grid[x1][y1] = _grid[x2][y2];
+		_grid[x2][y2] = temp;
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }
 
 
