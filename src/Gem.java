@@ -85,6 +85,10 @@ public class Gem{
 		}
 	}
 	
+	public String test(){
+		return _xOffset + " " + _yOffset;
+	}
+	
 	public void update(){
 		_yOffset += _yVel;
 		_xOffset += _xVel;
@@ -100,15 +104,16 @@ public class Gem{
 			System.out.println("wasfalling");
 		}
 		
-		if(_sliding != -1) {
-			if (_sliding == 0 && _yOffset <= 0 || _sliding == 1 && _xOffset >= 0 ||
-				_sliding == 2 && _yOffset >= 0 || _sliding == 3 && _xOffset <= 0){
-				_sliding = -1;
-				_xVel = _yVel = 0;
-				_xOffset = _yOffset = 0;
-					
-			}
+		
+		if (_sliding == 0 && _yOffset <= -.1 || _sliding == 1 && _xOffset >= .1||
+			_sliding == 2 && _yOffset >= .1 || _sliding == 3 && _xOffset <= -.1){
+			_sliding = -1;
+			System.out.println("I stopped offset");
+			_xVel = _yVel = 0;
+			_xOffset = _yOffset = 0;
+				
 		}
+	
 				
 		
 	}

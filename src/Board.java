@@ -95,7 +95,6 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			_cursorGridX = x;
 			_cursorGridY = y;
 		}
-		System.out.println(_selectedGemX + " " + _selectedGemY + " " + _grid.getGem(x,y).isSelected());
 
 	}
 
