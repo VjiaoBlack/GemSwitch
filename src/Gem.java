@@ -129,28 +129,28 @@ public class Gem{
 		_sliding = 0;
 		_yGridCor--;
 		_yOffset = SIZE;
-		_yVel = -.0005;
+		_yVel = -.0008;
 		return this;
 	}
 	public Gem swapDown(){
 		_sliding = 2;
 		_yGridCor++;
 		_yOffset = -SIZE;
-		_yVel = .0005;
+		_yVel = .0008;
 		return this;
 	}
 	public Gem swapLeft(){
 		_sliding = 3;
 		_xGridCor--;
 		_xOffset = SIZE;
-		_xVel = -.0005;
+		_xVel = -.0008;
 		return this;
 	}
 	public Gem swapRight(){
 		_sliding = 1;
 		_xGridCor++;
 		_xOffset = -SIZE;
-		_xVel = .0005;
+		_xVel = .0008;
 		return this;
 	}
 

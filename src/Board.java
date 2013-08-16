@@ -76,8 +76,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).select(),
-				_cursorGridX, _cursorGridY);
+		mouseMoved(e);
+		mousePressed(e);
 
 	}
 
@@ -95,7 +95,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			_cursorGridX = x;
 			_cursorGridY = y;
 		}
-		System.out.println(x + " " + y);
+		System.out.println(_selectedGemX + " " + _selectedGemY + " " + _grid.getGem(x,y).isSelected());
 
 	}
 
@@ -137,26 +137,31 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapRight().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapLeft().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-			}
-			if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
+				_selectedGemX = _selectedGemY = -1;
+				_swapping = true;
+			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapDown().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapUp().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-			}
-			if(_cursorGridX - _selectedGemX == -1 && _cursorGridY - _selectedGemY == 0){
+				_selectedGemX = _selectedGemY = -1;
+				_swapping = true;
+			} else if(_cursorGridX - _selectedGemX == -1 && _cursorGridY - _selectedGemY == 0){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapLeft().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapRight().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-			}
-			if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == -1){
+				_selectedGemX = _selectedGemY = -1;
+				_swapping = true;
+			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == -1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapUp().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapDown().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
+				_selectedGemX = _selectedGemY = -1;
+				_swapping = true;
+			} else {
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).deselect(), _selectedGemX, _selectedGemY);
+			
 			}
-			_selectedGemX = _selectedGemY = -1;
-			_swapping = true;
 		}
-		
 		
 		if (!_grid.getGem(_cursorGridX, _cursorGridY).isSelected()){
 			if (!_swapping){
@@ -165,9 +170,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_selectedGemY = _cursorGridY;
 			}
 			_swapping = false;
-			
-			
 		}
+		
 		else {
 			_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).deselect(), _cursorGridX, _cursorGridY);
 			_selectedGemX = _selectedGemY = -1;
