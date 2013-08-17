@@ -22,7 +22,10 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	public static final int LEFT_MARGIN_WIDTH = 256, TOP_MARGIN_HEIGHT = 64,
 			BORDER_WIDTH = 8, TOP_BORDER_HEIGHT = 32, BOTTOM_BORDER_HEIGHT = 8,
 			RIGHT_MARGIN_WIDTH = 64, BOTTOM_MARGIN_HEIGHT = 64;
-
+	public static final int FPS = 60, SKIP_TICKS = 1000/FPS;
+	
+	
+	
 	private Grid _grid;
 	private BufferedImage _background;
 	private Cursor _cursor;
@@ -48,10 +51,23 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	}
 
 	public void run() {
+		long nextTick = System.currentTimeMillis();
+		long sleepTime = 0;
 		_running = true;
 		while (_running) {
 			update();
 			repaint();
+			nextTick += SKIP_TICKS;
+			sleepTime = nextTick - (System.currentTimeMillis());
+			if (sleepTime >= 0) {
+				try {
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 		}
 	}
 
@@ -77,7 +93,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		mouseMoved(e);
-		mousePressed(e);
+		
 
 	}
 
@@ -131,6 +147,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			_cursorGridY = y;
 		}
 		
+		boolean selected = _grid.getGem(_cursorGridX, _cursorGridY).isSelected();
+		
 		if (_selectedGemX != -1 && _selectedGemY != -1){
 			if(_cursorGridX - _selectedGemX == 1 && _cursorGridY - _selectedGemY == 0){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapRight().deselect(), _selectedGemX, _selectedGemY);
@@ -158,23 +176,21 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_swapping = true;
 			} else {
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).deselect(), _selectedGemX, _selectedGemY);
-			
 			}
 		}
 		
-		if (!_grid.getGem(_cursorGridX, _cursorGridY).isSelected()){
+		if (!selected){
 			if (!_swapping){
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).select(), _cursorGridX, _cursorGridY);
 				_selectedGemX = _cursorGridX;
 				_selectedGemY = _cursorGridY;
 			}
 			_swapping = false;
-		}
-		
-		else {
+		} else {
 			_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).deselect(), _cursorGridX, _cursorGridY);
 			_selectedGemX = _selectedGemY = -1;
 		}
+		
 		
 		
 	}

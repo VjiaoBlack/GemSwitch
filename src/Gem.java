@@ -20,7 +20,7 @@ public class Gem{
 	private String _type;
 	private int _xGridCor, _yGridCor;
 	private double _xOffset, _yOffset, _yVel, _xVel;
-	private boolean _isFalling, _onGrid, _selected;
+	private boolean _isFalling, _selected, _alive;
 	private int _sliding; //-1, 0N, 1E, 2S, 3W
 	
 	public static void setup(){
@@ -43,15 +43,16 @@ public class Gem{
 		IMAGES.put("diamond", diamond);
 	}
 	
-	public Gem(int x, int y, String type){
-		_type = type;
+	public Gem(int x, int y){
+		_type = TYPES[(int) (Math.random() * TYPES.length)];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
+		_yOffset = 0 - 800 + (int) (Math.random() * 64) - (9 - y) * 64;
 		_yVel = 0;
 		_xVel = 0;
-		_isFalling = false;
-		_onGrid = false;
+		_isFalling = true;
 		_sliding = -1;
+		_alive = true;
 	}
 	
 	public int getXGridCor(){
@@ -74,6 +75,7 @@ public class Gem{
 				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE + (int)_yOffset,
 			       0, 0, 16, 16,
 			       null);
+	
 		if (_selected){
 			g.drawImage(SELECTED,
 					   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE, 
@@ -92,30 +94,32 @@ public class Gem{
 	public void update(){
 		_yOffset += _yVel;
 		_xOffset += _xVel;
-		if (_isFalling) {
-			_yVel = .001;		
-			System.out.println("isfalling");
-		}
 		
-		if (_isFalling && _yOffset + _yVel >= _yGridCor * SIZE + Board.TOP_BORDER_HEIGHT + 
-											  Board.TOP_MARGIN_HEIGHT){
-			_isFalling = false;
-			_yOffset = 0;
-			System.out.println("wasfalling");
+		
+		if (_isFalling) {
+			_yVel += .1;		
+		
+		
+			if (_yOffset + _yVel >= 0){
+				_isFalling = false;
+				_yVel = 0;
+				_yOffset = 0;
+			}
 		}
 		
 		
 		if (_sliding == 0 && _yOffset <= -.1 || _sliding == 1 && _xOffset >= .1||
 			_sliding == 2 && _yOffset >= .1 || _sliding == 3 && _xOffset <= -.1){
 			_sliding = -1;
-			System.out.println("I stopped offset");
 			_xVel = _yVel = 0;
-			_xOffset = _yOffset = 0;
-				
+			_xOffset = _yOffset = 0;	
 		}
-	
-				
+
 		
+	}
+	
+	public boolean isAlive(){
+		return _alive;
 	}
 	
 	public Gem select(){
@@ -134,28 +138,28 @@ public class Gem{
 		_sliding = 0;
 		_yGridCor--;
 		_yOffset = SIZE;
-		_yVel = -.0008;
+		_yVel = -4;
 		return this;
 	}
 	public Gem swapDown(){
 		_sliding = 2;
 		_yGridCor++;
 		_yOffset = -SIZE;
-		_yVel = .0008;
+		_yVel = 4;
 		return this;
 	}
 	public Gem swapLeft(){
 		_sliding = 3;
 		_xGridCor--;
 		_xOffset = SIZE;
-		_xVel = -.0008;
+		_xVel = -4;
 		return this;
 	}
 	public Gem swapRight(){
 		_sliding = 1;
 		_xGridCor++;
 		_xOffset = -SIZE;
-		_xVel = .0008;
+		_xVel = 4;
 		return this;
 	}
 
