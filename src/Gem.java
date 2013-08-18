@@ -47,7 +47,7 @@ public class Gem{
 		_type = TYPES[(int) (Math.random() * TYPES.length)];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
-		_yOffset = 0 - 320 + (int) (Math.random() * 64) - (9 - y) * 64;
+		_yOffset = 0 - 160 + (int) (Math.random() * 64) - (9 - y) * 64;
 		_yVel = 0;
 		_xVel = 0;
 		_isFalling = true;
@@ -96,7 +96,7 @@ public class Gem{
 		_xOffset += _xVel;
 		
 		
-		if (_isFalling) {
+		if (_isFalling && _sliding == -1) {
 			_yVel += .1;		
 		
 		
@@ -120,6 +120,14 @@ public class Gem{
 	
 	public boolean isAlive(){
 		return _alive;
+	}
+	
+	public boolean isSliding(){
+		return _sliding != -1;
+	}
+	
+	public boolean isFalling(){
+		return _isFalling;
 	}
 	
 	public Gem select(){

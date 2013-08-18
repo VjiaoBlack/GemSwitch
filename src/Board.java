@@ -86,6 +86,11 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	public void update() {
 		_grid.update();
+		for(int x = 0; x < Grid.GRID_WIDTH; x++){
+			_grid.searchCol(x);
+		}
+		for(int y = 0; y < Grid.GRID_HEIGHT; y++)
+			_grid.searchRow(y);
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
 	}
@@ -154,17 +159,17 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapRight().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapLeft().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-				//_grid.searchRow(_selectedGemY);
+				_grid.searchRow(_selectedGemY);
 				_grid.searchCol(_selectedGemX);
-				//_grid.searchCol(_selectedGemX + 1); //keep workin on this
+				_grid.searchCol(_selectedGemX + 1); //keep workin on this
 				_selectedGemX = _selectedGemY = -1;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapDown().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapUp().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-				//_grid.searchRow(_selectedGemY);
-				//_grid.searchRow(_selectedGemY + 1);
+				_grid.searchRow(_selectedGemY);
+				_grid.searchRow(_selectedGemY + 1);
 				_grid.searchCol(_selectedGemX);
 				_selectedGemX = _selectedGemY = -1;
 				_swapping = true;
@@ -172,17 +177,17 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapLeft().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapRight().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-				//_grid.searchRow(_selectedGemY);
+				_grid.searchRow(_selectedGemY);
 				_grid.searchCol(_selectedGemX);
-				//_grid.searchCol(_selectedGemX - 1);
+				_grid.searchCol(_selectedGemX - 1);
 				_selectedGemX = _selectedGemY = -1;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == -1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapUp().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapDown().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
-				//_grid.searchRow(_selectedGemY);
-				//_grid.searchRow(_selectedGemY - 1);
+				_grid.searchRow(_selectedGemY);
+				_grid.searchRow(_selectedGemY - 1);
 				_grid.searchCol(_selectedGemX); 	
 				_selectedGemX = _selectedGemY = -1;
 				_swapping = true;

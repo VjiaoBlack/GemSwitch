@@ -62,21 +62,24 @@ public class Grid{
 	}
 	
 	public int searchRow(int y){
-		int count2 = 0;
-		int count = 0;
+		int count2 = 1;
+		int count = 1;
 		int ans = 0;
 		boolean isFirst = true;
 		String temp = null;
 		
-		for(int i = 0; i < GRID_WIDTH; i++){
-			if (_grid[i][y].getType().equals(temp)){
+		for(int i = 0; i <= GRID_WIDTH; i++){
+			if (i < GRID_WIDTH && _grid[i][y].getType().equals(temp)){
 				count++;
-			} else { // this needs to be changed to include groups of 3's at the ends;
+				if (_grid[i][y].isSliding() || _grid[i][y].isFalling())
+					break;
+			} 
+			
+			if (i == GRID_WIDTH || !_grid[i][y].getType().equals(temp)){ // this needs to be changed to include groups of 3's at the ends;
 				if (count >= 3){
 					if (isFirst)
 						count2 = count;
 					//make gems fall here
-					System.out.println("count reached over 3");
 					for (int j = i-count; j < i; j++){
 						for (int k = y; k > 0; k--){
 							_grid[j][k] = _grid[j][k-1];
@@ -86,9 +89,10 @@ public class Grid{
 					}
 					isFirst = false;
 				}
-				temp = _grid[i][y].getType();
+				if (i < GRID_WIDTH)
+					temp = _grid[i][y].getType();
 				
-				count = 0;
+				count = 1;
 			}
 			
 		}
@@ -111,10 +115,10 @@ public class Grid{
 		for(int i = 0; i <= GRID_HEIGHT; i++){
 			if (i < GRID_HEIGHT && _grid[x][i].getType().equals(temp)){
 				count++;
-				System.out.print(count+ " ");
+				if (_grid[x][i].isSliding() || _grid[x][i].isFalling())
+					break;
 			} 
 			if (i == GRID_HEIGHT || !_grid[x][i].getType().equals(temp)){
-				
 				if (count >= 3){
 					if (isFirst)
 						count2 = count;
@@ -132,11 +136,9 @@ public class Grid{
 				if(i < GRID_HEIGHT)
 					temp = _grid[x][i].getType();
 				count = 1;
-				System.out.print(count + " ");
 			}
 			
 		}
-		System.out.println(" ");
 		if (count >= 3){
 			ans += count * 10;
 		}
