@@ -1,4 +1,7 @@
 import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -8,7 +11,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -29,17 +34,22 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	private Grid _grid;
 	private BufferedImage _background;
 	private Cursor _cursor;
+	private Font _font;
 
 	private boolean _running, _swapping;
-	private int _cursorGridX, _cursorGridY, _selectedGemX, _selectedGemY;
+	private int _cursorGridX, _cursorGridY, _selectedGemX, _selectedGemY, _score;
 
 	public Board() {
 		_grid = new Grid(6, 10);
 		try {
 			_background = ImageIO.read(new File("res/background.png"));
+			InputStream stream = new FileInputStream("res/font.ttf");
+            _font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(32);
 		} catch (IOException e) {
 			System.out.println("Problem with loading background");
-		}
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        }
 		_cursor = new Cursor();
 		_cursorGridX = 2;
 		_cursorGridY = 3;
@@ -48,6 +58,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		addMouseMotionListener(this);
 		_selectedGemX = _selectedGemY = -1;
 		_swapping = false;
+		_score = 0;
 	}
 
 	public void run() {
@@ -77,20 +88,22 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		g.setColor(Color.BLACK);
 		g2.drawImage(_background, 0, 0, 720, 808, 0, 0, 180, 202, null);
 
 		_grid.draw(g2);
 		_cursor.draw(g2);
-
+		g.drawString("score:", 32,460);
+		g.drawString(""+_score, 32,480);
 	}
 
 	public void update() {
 		_grid.update();
 		for(int x = 0; x < Grid.GRID_WIDTH; x++){
-			_grid.searchCol(x);
+			_score += _grid.searchCol(x);
 		}
 		for(int y = 0; y < Grid.GRID_HEIGHT; y++)
-			_grid.searchRow(y);
+			_score += _grid.searchRow(y);
 		_grid.removeGems();
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
@@ -162,25 +175,30 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapLeft().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
+				_score -=20;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapDown().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapUp().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
+				_score -=20;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == -1 && _cursorGridY - _selectedGemY == 0){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapLeft().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapRight().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
+				_score -=20;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == -1){
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapUp().deselect(), _selectedGemX, _selectedGemY);
 				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapDown().deselect(), _cursorGridX, _cursorGridY);
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);	
 				_selectedGemX = _selectedGemY = -1;
+				_score -=20;
 				_swapping = true;
+				
 			} else {
 				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).deselect(), _selectedGemX, _selectedGemY);
 			}

@@ -73,7 +73,7 @@ public class Grid{
 		for(int i = 0; i <= GRID_WIDTH; i++){
 			if (i < GRID_WIDTH && _grid[i][y].getType().equals(temp)){
 				count++;
-				if (_grid[i][y].isSliding() || _grid[i][y].isFalling() /*|| !_grid[i][y].isExploded()*/)
+				if (_grid[i][y].isSliding() || _grid[i][y].isFalling())
 					break;
 			} 
 			
@@ -114,7 +114,7 @@ public class Grid{
 		for(int i = 0; i <= GRID_HEIGHT; i++){
 			if (i < GRID_HEIGHT && _grid[x][i].getType().equals(temp)){
 				count++;
-				if (_grid[x][i].isSliding() || _grid[x][i].isFalling() /*|| !_grid[x][i].isExploded()*/)
+				if (_grid[x][i].isSliding() || _grid[x][i].isFalling())
 					break;
 			} 
 			if (i == GRID_HEIGHT || !_grid[x][i].getType().equals(temp)){

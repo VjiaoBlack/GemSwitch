@@ -37,7 +37,6 @@ public class Explosion {
 			_counter++;
 			if (_stage != -1)
 				_stage = _counter / 5;
-			System.out.println(_stage);
 		}
 		if (_counter >= 20){
 			_counter = -1;

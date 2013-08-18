@@ -7,33 +7,31 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+public class Gem {
 
-public class Gem{
-	
 	private static final int SIZE = 64;
-	private static final int SPEED = 4;
-	
-	private static final HashMap<String,BufferedImage> IMAGES = new HashMap<String,BufferedImage>();
-	private static final String[] TYPES = {"ruby", "sapphire", "emerald", "topaz", "diamond"};
+
+	private static final HashMap<String, BufferedImage> IMAGES = new HashMap<String, BufferedImage>();
+	private static final String[] TYPES = { "ruby", "sapphire", "emerald",
+			"topaz", "diamond", "heart" };
 	private static BufferedImage SELECTED = null;
-	
+
 	private String _type;
 	private int _xGridCor, _yGridCor;
 	private double _xOffset, _yOffset, _yVel, _xVel;
 	private boolean _isFalling, _selected, _alive;
-	private int _sliding, _exploding, _explodeOffset; //-1, 0N, 1E, 2S, 3W
-	
-	
-	public static void setup(){
-		BufferedImage ruby = null, sapphire = null, emerald = null,
-					  topaz = null, diamond = null;
+	private int _sliding; // -1, 0N, 1E, 2S, 3W
+
+	public static void setup() {
+		BufferedImage ruby = null, sapphire = null, emerald = null, topaz = null, diamond = null, heart = null;
 		try {
-		    ruby = ImageIO.read(new File("res/ruby.png"));
-		    sapphire = ImageIO.read(new File("res/sapphire.png"));
-		    emerald = ImageIO.read(new File("res/emerald.png"));
-		    topaz = ImageIO.read(new File("res/shield.png"));
-		    diamond = ImageIO.read(new File("res/diamond.png"));
-		    SELECTED = ImageIO.read(new File("res/selected.png"));
+			ruby = ImageIO.read(new File("res/ruby.png"));
+			sapphire = ImageIO.read(new File("res/sapphire.png"));
+			emerald = ImageIO.read(new File("res/emerald.png"));
+			topaz = ImageIO.read(new File("res/shield.png"));
+			diamond = ImageIO.read(new File("res/diamond.png"));
+			heart = ImageIO.read(new File("res/heart.png"));
+			SELECTED = ImageIO.read(new File("res/selected.png"));
 		} catch (IOException e) {
 			System.out.println("Image imports broken");
 		}
@@ -42,9 +40,10 @@ public class Gem{
 		IMAGES.put("emerald", emerald);
 		IMAGES.put("topaz", topaz);
 		IMAGES.put("diamond", diamond);
+		IMAGES.put("heart", heart);
 	}
-	
-	public Gem(int x, int y){
+
+	public Gem(int x, int y) {
 		_type = TYPES[(int) (Math.random() * TYPES.length)];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
@@ -54,160 +53,132 @@ public class Gem{
 		_isFalling = true;
 		_sliding = -1;
 		_alive = true;
-		_exploding = -1;
-		_explodeOffset = 0;
 
 	}
-	
-	public int getXGridCor(){
+
+	public int getXGridCor() {
 		return _xGridCor;
 	}
-	
-	public int getYGridCor(){
+
+	public int getYGridCor() {
 		return _yGridCor;
 	}
-	
-	public String getType(){
+
+	public String getType() {
 		return _type;
 	}
-	
-	public void draw(Graphics2D g){
-		g.drawImage(IMAGES.get(_type),
-				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE + (int)_xOffset + _explodeOffset, 
-				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE + (int)_yOffset + _explodeOffset,
-				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE + (int)_xOffset - _explodeOffset, 
-				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE + (int)_yOffset - _explodeOffset,
-			       0, 0, 16, 16,
-			       null);
-	
-		if (_selected){
-			g.drawImage(SELECTED,
-					   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE, 
-					   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE,
-					   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE, 
-					   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE,
-				       0, 0, 16, 16,
-				       null);
+
+	public void draw(Graphics2D g) {
+		g.drawImage(IMAGES.get(_type), Board.BORDER_WIDTH
+				+ Board.LEFT_MARGIN_WIDTH + _xGridCor * SIZE + (int) _xOffset
+				, Board.TOP_BORDER_HEIGHT
+				+ Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE + (int) _yOffset
+				, Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH
+				+ (_xGridCor + 1) * SIZE + (int) _xOffset,
+				Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT
+						+ (_yGridCor + 1) * SIZE + (int) _yOffset
+						, 0, 0, 16, 16, null);
+
+		if (_selected) {
+			g.drawImage(SELECTED, Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH
+					+ _xGridCor * SIZE, Board.TOP_BORDER_HEIGHT
+					+ Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE,
+					Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH
+							+ (_xGridCor + 1) * SIZE, Board.TOP_BORDER_HEIGHT
+							+ Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE,
+					0, 0, 16, 16, null);
 		}
 	}
-	
-	public String test(){
+
+	public String test() {
 		return _xOffset + " " + _yOffset;
 	}
 	
-	@SuppressWarnings("unused")
-	public void update(){
+	public void update() {
 		_yOffset += _yVel;
 		_xOffset += _xVel;
-		
-		
+
 		if (_isFalling) {
-			_yVel += .1;		
-		
-		
-			if (_yOffset + _yVel >= 0){
+			_yVel += .1;
+
+			if (_yOffset + _yVel >= 0) {
 				_isFalling = false;
 				_yVel = 0;
 				_yOffset = 0;
 			}
 		}
-		
-		
-		if (!_isFalling && (_sliding == 0 && _yOffset <= -.1 || _sliding == 1 && _xOffset >= .1||
-			_sliding == 2 && _yOffset >= .1 || _sliding == 3 && _xOffset <= -.1)){
+
+		if (!_isFalling
+				&& (_sliding == 0 && _yOffset <= -.1 || _sliding == 1
+						&& _xOffset >= .1 || _sliding == 2 && _yOffset >= .1 || _sliding == 3
+						&& _xOffset <= -.1)) {
 			_sliding = -1;
 			_xVel = _yVel = 0;
-			_xOffset = _yOffset = 0;	
+			_xOffset = _yOffset = 0;
 		}
-		
-		//deadcode
-		if (false && !_isFalling && _sliding == -1 && _exploding > -1){
-			_exploding++;
-			
-			if (_exploding >= 30){
-				_explodeOffset = 0;
-			} else if (_exploding >= 20){
-				_explodeOffset = 16;
-			} else if (_exploding >= 10){
-				_explodeOffset = 0;
-			} else if (_exploding >= 0){
-				_explodeOffset = 16;
-			}
-			if (_exploding >= 40){
-				_exploding = -2;
-			}
-		}
-		
-		
-		
+
 	}
-	
-	public boolean isAlive(){
-		return _alive;
-	}
-	
-	public boolean isSliding(){
+
+	public boolean isSliding() {
 		return _sliding != -1;
 	}
-	
-	public boolean isFalling(){
+
+	public boolean isFalling() {
 		return _isFalling;
 	}
-	
-	public boolean isExploded(){
-		return _exploding == -2;
-	}
-	
-	public void explode(){
-		_exploding = -2;
-	}
-	
-	public Gem select(){
+
+	public Gem select() {
 		_selected = true;
 		return this;
 	}
-	public Gem deselect(){
+
+	public Gem deselect() {
 		_selected = false;
 		return this;
 	}
-	public boolean isSelected(){
+
+	public boolean isSelected() {
 		return _selected;
 	}
-	
-	public Gem swapUp(){
+
+	public Gem swapUp() {
 		_sliding = 0;
 		_yGridCor--;
 		_yOffset = SIZE;
 		_yVel = -4;
 		return this;
 	}
-	public Gem swapDown(){
+
+	public Gem swapDown() {
 		_sliding = 2;
 		_yGridCor++;
 		_yOffset = -SIZE;
 		_yVel = 4;
 		return this;
 	}
-	public Gem swapLeft(){
+
+	public Gem swapLeft() {
 		_sliding = 3;
 		_xGridCor--;
 		_xOffset = SIZE;
 		_xVel = -4;
 		return this;
 	}
-	public Gem swapRight(){
+
+	public Gem swapRight() {
 		_sliding = 1;
 		_xGridCor++;
 		_xOffset = -SIZE;
 		_xVel = 4;
 		return this;
 	}
-	public void fallDown(int dist){
 
-			_yGridCor += dist;
-			_yOffset -= dist * SIZE;
-			if (dist > 0)
-				_isFalling = true;
+	public void fallDown(int dist) {
+
+		_yGridCor += dist;
+		_yOffset -= dist * SIZE;
+		if (dist > 0)
+			_isFalling = true;
 	}
 
 }
