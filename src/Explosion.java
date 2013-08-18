@@ -36,9 +36,9 @@ public class Explosion {
 		if (_counter != -1){
 			_counter++;
 			if (_stage != -1)
-				_stage = _counter / 5;
+				_stage = _counter / 2;
 		}
-		if (_counter >= 20){
+		if (_counter >= 8){
 			_counter = -1;
 			_stage = -1;
 		}

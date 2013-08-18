@@ -99,7 +99,7 @@ public class Gem {
 		_xOffset += _xVel;
 
 		if (_isFalling) {
-			_yVel = 8;
+			_yVel = 12;
 
 			if (_yOffset + _yVel >= 0) {
 				_isFalling = false;
@@ -145,7 +145,7 @@ public class Gem {
 		_sliding = 0;
 		_yGridCor--;
 		_yOffset = SIZE;
-		_yVel = -4;
+		_yVel = -8;
 		return this;
 	}
 
@@ -153,7 +153,7 @@ public class Gem {
 		_sliding = 2;
 		_yGridCor++;
 		_yOffset = -SIZE;
-		_yVel = 4;
+		_yVel = 8;
 		return this;
 	}
 
@@ -161,7 +161,7 @@ public class Gem {
 		_sliding = 3;
 		_xGridCor--;
 		_xOffset = SIZE;
-		_xVel = -4;
+		_xVel = -8;
 		return this;
 	}
 
@@ -169,7 +169,7 @@ public class Gem {
 		_sliding = 1;
 		_xGridCor++;
 		_xOffset = -SIZE;
-		_xVel = 4;
+		_xVel = 8;
 		return this;
 	}
 

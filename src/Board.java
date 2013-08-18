@@ -29,7 +29,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	public static final int LEFT_MARGIN_WIDTH = 256, TOP_MARGIN_HEIGHT = 64,
 			BORDER_WIDTH = 8, TOP_BORDER_HEIGHT = 32, BOTTOM_BORDER_HEIGHT = 8,
 			RIGHT_MARGIN_WIDTH = 64, BOTTOM_MARGIN_HEIGHT = 64;
-	public static final int FPS = 60, SKIP_TICKS = 1000 / FPS;
+	public static final int FPS = 30, SKIP_TICKS = 1000 / FPS;
 
 	private Grid _grid;
 	private BufferedImage _background;
@@ -77,7 +77,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			sleepTime = nextTick - (System.currentTimeMillis());
 			if (sleepTime >= 0) {
 				try {
-					Thread.sleep(sleepTime * 5);
+					Thread.sleep(sleepTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
