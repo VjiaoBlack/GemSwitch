@@ -71,10 +71,13 @@ public class Grid{
 		String temp = null;
 		
 		for(int i = 0; i <= GRID_WIDTH; i++){
-			if (i < GRID_WIDTH && _grid[i][y].getType().equals(temp)){
-				count++;
+			if (i < GRID_WIDTH){
 				if (_grid[i][y].isSliding() || _grid[i][y].isFalling())
 					break;
+			}
+			
+			if (i < GRID_WIDTH && _grid[i][y].getType().equals(temp)){
+				count++;
 			} 
 			
 			if (i == GRID_WIDTH || !_grid[i][y].getType().equals(temp)){ // this needs to be changed to include groups of 3's at the ends;
@@ -112,10 +115,12 @@ public class Grid{
 		String temp = null;
 		
 		for(int i = 0; i <= GRID_HEIGHT; i++){
-			if (i < GRID_HEIGHT && _grid[x][i].getType().equals(temp)){
-				count++;
+			if (i < GRID_HEIGHT){
 				if (_grid[x][i].isSliding() || _grid[x][i].isFalling())
 					break;
+			}
+			if (i < GRID_HEIGHT && _grid[x][i].getType().equals(temp)){
+				count++;
 			} 
 			if (i == GRID_HEIGHT || !_grid[x][i].getType().equals(temp)){
 				if (count >= 3){
