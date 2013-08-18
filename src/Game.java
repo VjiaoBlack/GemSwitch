@@ -19,7 +19,7 @@ public class Game {
 		f.setResizable(false);
 		f.add(_board);
 		f.setVisible(true);
-		
+		_board.createBufferStrategy(2);
 		_board.run();
 	}
 }
