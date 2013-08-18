@@ -107,7 +107,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		_grid.removeGems();
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
-
+		repaint();
 	}
 
 	@Override
