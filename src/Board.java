@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -66,9 +67,12 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		long sleepTime = 0;
 		_running = true;
 		createBufferStrategy(2);
+		BufferStrategy strategy = getBufferStrategy();
 		while (_running) {
-			update();
+	        Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
+			update(graphics);
 			repaint();
+			
 			nextTick += SKIP_TICKS;
 			sleepTime = nextTick - (System.currentTimeMillis());
 			if (sleepTime >= 0) {
@@ -78,6 +82,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 					e.printStackTrace();
 				}
 			}
+	        graphics.dispose();
+	        strategy.show();
 
 		}
 	}
@@ -88,6 +94,10 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		
+		
+		
+		
 		g2.setColor(Color.BLACK);
 		g2.drawImage(_background, 0, 0, 720, 808, 0, 0, 180, 202, null);
 
@@ -97,7 +107,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		g2.drawString("" + _score, 32, 480);
 	}
 
-	public void update() {
+	public void update(Graphics2D g) {
 		_grid.update();
 		for (int x = 0; x < Grid.GRID_WIDTH; x++) {
 			_score += _grid.searchCol(x);
@@ -107,7 +117,25 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		_grid.removeGems();
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
-		repaint();
+	
+		
+		Graphics offgc;
+	    Image offscreen = null;
+
+	    // create the offscreen buffer and associated Graphics
+	    offscreen = createImage(720,808); //createImage(720, 808);
+	    offgc = offscreen.getGraphics();
+	    
+	    // clear the exposed area
+
+	    // do normal redraw
+	    paint(offgc);
+	    
+	    // transfer offscreen to window
+	    g.drawImage(offscreen, 0, 0, this);
+		
+		
+		
 	}
 
 	@Override
