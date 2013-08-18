@@ -161,7 +161,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
 				_grid.searchRow(_selectedGemY);
 				_grid.searchCol(_selectedGemX);
-				_grid.searchCol(_selectedGemX + 1); //keep workin on this
+				_grid.searchCol(_selectedGemX + 1);
 				_selectedGemX = _selectedGemY = -1;
 				_swapping = true;
 			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
