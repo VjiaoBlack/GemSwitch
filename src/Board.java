@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,29 +28,28 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	public static final int LEFT_MARGIN_WIDTH = 256, TOP_MARGIN_HEIGHT = 64,
 			BORDER_WIDTH = 8, TOP_BORDER_HEIGHT = 32, BOTTOM_BORDER_HEIGHT = 8,
 			RIGHT_MARGIN_WIDTH = 64, BOTTOM_MARGIN_HEIGHT = 64;
-	public static final int FPS = 60, SKIP_TICKS = 1000/FPS;
-	
-	
-	
+	public static final int FPS = 60, SKIP_TICKS = 1000 / FPS;
+
 	private Grid _grid;
 	private BufferedImage _background;
 	private Cursor _cursor;
 	private Font _font;
 
 	private boolean _running, _swapping;
-	private int _cursorGridX, _cursorGridY, _selectedGemX, _selectedGemY, _score;
+	private int _cursorGridX, _cursorGridY, _selectedGemX, _selectedGemY,
+			_score;
 
 	public Board() {
 		_grid = new Grid(6, 10);
 		try {
 			_background = ImageIO.read(new File("res/background.png"));
 			InputStream stream = new FileInputStream("res/font.ttf");
-            _font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(32);
+			_font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(32);
 		} catch (IOException e) {
 			System.out.println("Problem with loading background");
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        }
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		}
 		_cursor = new Cursor();
 		_cursorGridX = 2;
 		_cursorGridY = 3;
@@ -65,6 +65,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		long nextTick = System.currentTimeMillis();
 		long sleepTime = 0;
 		_running = true;
+		createBufferStrategy(2);
 		while (_running) {
 			update();
 			repaint();
@@ -74,11 +75,10 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				try {
 					Thread.sleep(sleepTime);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+
 		}
 	}
 
@@ -88,32 +88,31 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g.setColor(Color.BLACK);
+		g2.setColor(Color.BLACK);
 		g2.drawImage(_background, 0, 0, 720, 808, 0, 0, 180, 202, null);
 
 		_grid.draw(g2);
 		_cursor.draw(g2);
-		g.drawString("score:", 32,460);
-		g.drawString(""+_score, 32,480);
+		g2.drawString("score:", 32, 460);
+		g2.drawString("" + _score, 32, 480);
 	}
 
 	public void update() {
 		_grid.update();
-		for(int x = 0; x < Grid.GRID_WIDTH; x++){
+		for (int x = 0; x < Grid.GRID_WIDTH; x++) {
 			_score += _grid.searchCol(x);
 		}
-		for(int y = 0; y < Grid.GRID_HEIGHT; y++)
+		for (int y = 0; y < Grid.GRID_HEIGHT; y++)
 			_score += _grid.searchRow(y);
 		_grid.removeGems();
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
-		
+
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		mouseMoved(e);
-		
 
 	}
 
@@ -162,62 +161,80 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 		x /= 64;
 		y /= 64;
-		if (x >= 0 && x <= 5 && y >= 0 && y <= 9){
+		if (x >= 0 && x <= 5 && y >= 0 && y <= 9) {
 			_cursorGridX = x;
 			_cursorGridY = y;
 		}
-		
-		boolean selected = _grid.getGem(_cursorGridX, _cursorGridY).isSelected();
-		
-		if (_selectedGemX != -1 && _selectedGemY != -1){
-			if(_cursorGridX - _selectedGemX == 1 && _cursorGridY - _selectedGemY == 0){
-				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapRight().deselect(), _selectedGemX, _selectedGemY);
-				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapLeft().deselect(), _cursorGridX, _cursorGridY);
-				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
+
+		boolean selected = _grid.getGem(_cursorGridX, _cursorGridY)
+				.isSelected();
+
+		if (_selectedGemX != -1 && _selectedGemY != -1) {
+			if (_cursorGridX - _selectedGemX == 1
+					&& _cursorGridY - _selectedGemY == 0) {
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY)
+						.swapRight().deselect(), _selectedGemX, _selectedGemY);
+				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY)
+						.swapLeft().deselect(), _cursorGridX, _cursorGridY);
+				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
+						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -=20;
+				_score -= 20;
 				_swapping = true;
-			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == 1){
-				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapDown().deselect(), _selectedGemX, _selectedGemY);
-				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapUp().deselect(), _cursorGridX, _cursorGridY);
-				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
+			} else if (_cursorGridX - _selectedGemX == 0
+					&& _cursorGridY - _selectedGemY == 1) {
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY)
+						.swapDown().deselect(), _selectedGemX, _selectedGemY);
+				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapUp()
+						.deselect(), _cursorGridX, _cursorGridY);
+				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
+						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -=20;
+				_score -= 20;
 				_swapping = true;
-			} else if(_cursorGridX - _selectedGemX == -1 && _cursorGridY - _selectedGemY == 0){
-				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapLeft().deselect(), _selectedGemX, _selectedGemY);
-				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapRight().deselect(), _cursorGridX, _cursorGridY);
-				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);
+			} else if (_cursorGridX - _selectedGemX == -1
+					&& _cursorGridY - _selectedGemY == 0) {
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY)
+						.swapLeft().deselect(), _selectedGemX, _selectedGemY);
+				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY)
+						.swapRight().deselect(), _cursorGridX, _cursorGridY);
+				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
+						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -=20;
+				_score -= 20;
 				_swapping = true;
-			} else if(_cursorGridX - _selectedGemX == 0 && _cursorGridY - _selectedGemY == -1){
-				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).swapUp().deselect(), _selectedGemX, _selectedGemY);
-				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).swapDown().deselect(), _cursorGridX, _cursorGridY);
-				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX, _cursorGridY);	
+			} else if (_cursorGridX - _selectedGemX == 0
+					&& _cursorGridY - _selectedGemY == -1) {
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY)
+						.swapUp().deselect(), _selectedGemX, _selectedGemY);
+				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY)
+						.swapDown().deselect(), _cursorGridX, _cursorGridY);
+				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
+						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -=20;
+				_score -= 20;
 				_swapping = true;
-				
+
 			} else {
-				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY).deselect(), _selectedGemX, _selectedGemY);
+				_grid.setGem(_grid.getGem(_selectedGemX, _selectedGemY)
+						.deselect(), _selectedGemX, _selectedGemY);
 			}
 		}
-		
-		if (!selected){
-			if (!_swapping){
-				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).select(), _cursorGridX, _cursorGridY);
+
+		if (!selected) {
+			if (!_swapping) {
+				_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).select(),
+						_cursorGridX, _cursorGridY);
 				_selectedGemX = _cursorGridX;
 				_selectedGemY = _cursorGridY;
 			}
 			_swapping = false;
 		} else {
-			_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).deselect(), _cursorGridX, _cursorGridY);
+			_grid.setGem(_grid.getGem(_cursorGridX, _cursorGridY).deselect(),
+					_cursorGridX, _cursorGridY);
 			_selectedGemX = _selectedGemY = -1;
 		}
-		
-		
-		
+
 	}
 
 	@Override
