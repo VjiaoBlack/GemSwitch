@@ -77,7 +77,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			sleepTime = nextTick - (System.currentTimeMillis());
 			if (sleepTime >= 0) {
 				try {
-					Thread.sleep(sleepTime);
+					Thread.sleep(sleepTime * 5);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

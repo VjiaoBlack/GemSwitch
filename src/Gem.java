@@ -47,7 +47,7 @@ public class Gem {
 		_type = TYPES[(int) (Math.random() * TYPES.length)];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
-		_yOffset = 0 - 160 + (int) (Math.random() * 64) - (9 - y) * 64;
+		_yOffset =  (int) (Math.random() * 64) - (9 - y) * 64;
 		_yVel = 0;
 		_xVel = 0;
 		_isFalling = true;
@@ -99,7 +99,7 @@ public class Gem {
 		_xOffset += _xVel;
 
 		if (_isFalling) {
-			_yVel += .1;
+			_yVel = 8;
 
 			if (_yOffset + _yVel >= 0) {
 				_isFalling = false;
