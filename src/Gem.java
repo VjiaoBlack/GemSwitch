@@ -47,7 +47,7 @@ public class Gem{
 		_type = TYPES[(int) (Math.random() * TYPES.length)];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
-		_yOffset = 0 - 800 + (int) (Math.random() * 64) - (9 - y) * 64;
+		_yOffset = 0 - 320 + (int) (Math.random() * 64) - (9 - y) * 64;
 		_yVel = 0;
 		_xVel = 0;
 		_isFalling = true;
@@ -63,8 +63,8 @@ public class Gem{
 		return _yGridCor;
 	}
 	
-	public static String getType(int pos){
-		return TYPES[pos];
+	public String getType(){
+		return _type;
 	}
 	
 	public void draw(Graphics2D g){
@@ -161,6 +161,11 @@ public class Gem{
 		_xOffset = -SIZE;
 		_xVel = 4;
 		return this;
+	}
+	public void fallDown(int dist){
+		_yGridCor += dist;
+		_yOffset -= dist * SIZE;
+		_isFalling = true;
 	}
 
 }

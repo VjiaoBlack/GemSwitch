@@ -12,6 +12,8 @@ public class Grid{
 	
 	public Gem[][] _grid;
 	
+	private Gem[] _combo1, _combo2;
+	
 	public Grid(int _width, int _height){
 		GRID_WIDTH = _width;
 		GRID_HEIGHT = _height;
@@ -21,6 +23,10 @@ public class Grid{
 				_grid[x][y] = new Gem(x, y);
 			}
 		}
+		_combo1 = new Gem[5];
+		_combo2 = new Gem[5];
+		for (int i = 0; i < 5; i++)
+			_combo1[i] = _combo2[i] = null;
 		
 	}
 	
@@ -52,7 +58,94 @@ public class Grid{
 		Gem temp = _grid[x1][y1];
 		_grid[x1][y1] = _grid[x2][y2];
 		_grid[x2][y2] = temp;
+
 	}
+	
+	public int searchRow(int y){
+		int count2 = 0;
+		int count = 0;
+		int ans = 0;
+		boolean isFirst = true;
+		String temp = null;
+		
+		for(int i = 0; i < GRID_WIDTH; i++){
+			if (_grid[i][y].getType().equals(temp)){
+				count++;
+			} else { // this needs to be changed to include groups of 3's at the ends;
+				if (count >= 3){
+					if (isFirst)
+						count2 = count;
+					//make gems fall here
+					System.out.println("count reached over 3");
+					for (int j = i-count; j < i; j++){
+						for (int k = y; k > 0; k--){
+							_grid[j][k] = _grid[j][k-1];
+							_grid[j][k].fallDown(1);
+						}
+						_grid[j][0] = new Gem(j,0);
+					}
+					isFirst = false;
+				}
+				temp = _grid[i][y].getType();
+				
+				count = 0;
+			}
+			
+		}
+		if (count >= 3){
+			ans += count * 10;
+		}
+		if (count2 >= 3){
+			ans += count2 * 10;
+		}
+		return ans;
+	}
+	
+	public int searchCol(int x){
+		int count2 = 1;
+		int count = 1;
+		int ans = 0;
+		boolean isFirst = true;
+		String temp = null;
+		
+		for(int i = 0; i <= GRID_HEIGHT; i++){
+			if (i < GRID_HEIGHT && _grid[x][i].getType().equals(temp)){
+				count++;
+				System.out.print(count+ " ");
+			} 
+			if (i == GRID_HEIGHT || !_grid[x][i].getType().equals(temp)){
+				
+				if (count >= 3){
+					if (isFirst)
+						count2 = count;
+					//make gems fall here
+					for (int j = i-1; j >= 0; j--){
+							if (j - count >= 0){
+								_grid[x][j] = _grid[x][j-count];
+								_grid[x][j].fallDown(count);
+							}
+							else
+								_grid[x][j] = new Gem(x,j);
+					}
+					isFirst = false;
+				}
+				if(i < GRID_HEIGHT)
+					temp = _grid[x][i].getType();
+				count = 1;
+				System.out.print(count + " ");
+			}
+			
+		}
+		System.out.println(" ");
+		if (count >= 3){
+			ans += count * 10;
+		}
+		if (count2 >= 3){
+			ans += count2 * 10;
+		}
+		return ans;
+	}
+	
 	
 }
 
