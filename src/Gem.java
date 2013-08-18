@@ -21,7 +21,8 @@ public class Gem{
 	private int _xGridCor, _yGridCor;
 	private double _xOffset, _yOffset, _yVel, _xVel;
 	private boolean _isFalling, _selected, _alive;
-	private int _sliding; //-1, 0N, 1E, 2S, 3W
+	private int _sliding, _exploding, _explodeOffset; //-1, 0N, 1E, 2S, 3W
+	
 	
 	public static void setup(){
 		BufferedImage ruby = null, sapphire = null, emerald = null,
@@ -53,6 +54,9 @@ public class Gem{
 		_isFalling = true;
 		_sliding = -1;
 		_alive = true;
+		_exploding = -1;
+		_explodeOffset = 0;
+
 	}
 	
 	public int getXGridCor(){
@@ -69,10 +73,10 @@ public class Gem{
 	
 	public void draw(Graphics2D g){
 		g.drawImage(IMAGES.get(_type),
-				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE + (int)_xOffset, 
-				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE + (int)_yOffset,
-				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE + (int)_xOffset, 
-				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE + (int)_yOffset,
+				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE + (int)_xOffset + _explodeOffset, 
+				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE + (int)_yOffset + _explodeOffset,
+				   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE + (int)_xOffset - _explodeOffset, 
+				   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE + (int)_yOffset - _explodeOffset,
 			       0, 0, 16, 16,
 			       null);
 	
@@ -91,12 +95,13 @@ public class Gem{
 		return _xOffset + " " + _yOffset;
 	}
 	
+	@SuppressWarnings("unused")
 	public void update(){
 		_yOffset += _yVel;
 		_xOffset += _xVel;
 		
 		
-		if (_isFalling && _sliding == -1) {
+		if (_isFalling) {
 			_yVel += .1;		
 		
 		
@@ -108,13 +113,32 @@ public class Gem{
 		}
 		
 		
-		if (_sliding == 0 && _yOffset <= -.1 || _sliding == 1 && _xOffset >= .1||
-			_sliding == 2 && _yOffset >= .1 || _sliding == 3 && _xOffset <= -.1){
+		if (!_isFalling && (_sliding == 0 && _yOffset <= -.1 || _sliding == 1 && _xOffset >= .1||
+			_sliding == 2 && _yOffset >= .1 || _sliding == 3 && _xOffset <= -.1)){
 			_sliding = -1;
 			_xVel = _yVel = 0;
 			_xOffset = _yOffset = 0;	
 		}
-
+		
+		//deadcode
+		if (false && !_isFalling && _sliding == -1 && _exploding > -1){
+			_exploding++;
+			
+			if (_exploding >= 30){
+				_explodeOffset = 0;
+			} else if (_exploding >= 20){
+				_explodeOffset = 16;
+			} else if (_exploding >= 10){
+				_explodeOffset = 0;
+			} else if (_exploding >= 0){
+				_explodeOffset = 16;
+			}
+			if (_exploding >= 40){
+				_exploding = -2;
+			}
+		}
+		
+		
 		
 	}
 	
@@ -128,6 +152,14 @@ public class Gem{
 	
 	public boolean isFalling(){
 		return _isFalling;
+	}
+	
+	public boolean isExploded(){
+		return _exploding == -2;
+	}
+	
+	public void explode(){
+		_exploding = -2;
 	}
 	
 	public Gem select(){
@@ -171,9 +203,11 @@ public class Gem{
 		return this;
 	}
 	public void fallDown(int dist){
-		_yGridCor += dist;
-		_yOffset -= dist * SIZE;
-		_isFalling = true;
+
+			_yGridCor += dist;
+			_yOffset -= dist * SIZE;
+			if (dist > 0)
+				_isFalling = true;
 	}
 
 }

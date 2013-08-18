@@ -1,16 +1,28 @@
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 
 public class Explosion {
-	private int _xcor;
-	private int _ycor;
+	private int _xGridCor;
+	private int _yGridCor;
 	private int _stage;
-	
 	private int _counter;
+	private static BufferedImage explosion = null;
+	private static int SIZE = 64;
 	
 	public Explosion(int x, int y){
-		_xcor = x;
-		_ycor = y;
+		try {
+			explosion = ImageIO.read(new File("res/pop.png"));
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		
+		_xGridCor = x;
+		_yGridCor = y;
 		_stage = -1;
 		_counter = -1;
 	}
@@ -24,9 +36,10 @@ public class Explosion {
 		if (_counter != -1){
 			_counter++;
 			if (_stage != -1)
-				_stage = _counter % 10;
+				_stage = _counter / 5;
+			System.out.println(_stage);
 		}
-		if (_counter >= 40){
+		if (_counter >= 20){
 			_counter = -1;
 			_stage = -1;
 		}
@@ -34,7 +47,13 @@ public class Explosion {
 	
 	public void draw(Graphics2D g){
 		if (_counter != -1){
-			
+			g.drawImage(explosion,
+					   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + _xGridCor * SIZE, 
+					   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + _yGridCor * SIZE,
+					   Board.BORDER_WIDTH + Board.LEFT_MARGIN_WIDTH      + (_xGridCor + 1) * SIZE, 
+					   Board.TOP_BORDER_HEIGHT + Board.TOP_MARGIN_HEIGHT + (_yGridCor + 1) * SIZE,
+				       16*(_stage), 0, 16 * (_stage + 1), 16,
+				       null);
 		}
 	}
 	
