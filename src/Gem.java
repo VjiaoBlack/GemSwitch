@@ -116,6 +116,7 @@ public class Gem {
 			_xVel = _yVel = 0;
 			_xOffset = _yOffset = 0;
 		}
+		
 
 	}
 

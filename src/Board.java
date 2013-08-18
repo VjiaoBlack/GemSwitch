@@ -70,6 +70,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		BufferStrategy strategy = getBufferStrategy();
 		while (_running) {
 	        Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
+	        repaint();
 			update(graphics);
 			repaint();
 			
