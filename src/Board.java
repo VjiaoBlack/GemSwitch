@@ -32,7 +32,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	public static final int FPS = 60, SKIP_TICKS = 1000 / FPS;
 
 	private Grid _grid;
-	private BufferedImage _background;
+	private BufferedImage _background, _numbers;
 	private Cursor _cursor;
 	private Font _font;
 
@@ -44,6 +44,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		_grid = new Grid(6, 10);
 		try {
 			_background = ImageIO.read(new File("res/background.png"));
+			_numbers = ImageIO.read(new File("res/numbers.png"));
 			InputStream stream = new FileInputStream("res/font.ttf");
 			_font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(32);
 		} catch (IOException e) {
@@ -103,8 +104,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 		_grid.draw(g2);
 		_cursor.draw(g2);
-		g2.drawString("score:", 32, 460);
-		g2.drawString("" + _score, 32, 480);
+		drawScore(g2);
 	}
 
 	public void update(Graphics2D g) {
@@ -136,6 +136,21 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		
 		
 		
+	}
+	
+	public void drawScore(Graphics2D g){
+		int digit;
+		String points = _score + 100000 + "";
+		for(int i = 1; i < 6; i++){
+			digit = Integer.parseInt(points.substring(i,i+1));
+			g.drawImage(_numbers,
+					(i - 1) * 48,
+					TOP_BORDER_HEIGHT + TOP_MARGIN_HEIGHT + 320,
+					i * 48,
+					TOP_BORDER_HEIGHT + TOP_MARGIN_HEIGHT + 384,
+					digit * 12, 0, (digit + 1) * 12, 16, null);
+			
+		}
 	}
 
 	@Override
@@ -175,12 +190,20 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_Q){
+			shutdown();
+			_running = false;
+		}
 
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
 
@@ -263,11 +286,6 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			_selectedGemX = _selectedGemY = -1;
 		}
 
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
