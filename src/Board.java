@@ -66,13 +66,13 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		long nextTick = System.currentTimeMillis();
 		long sleepTime = 0;
 		_running = true;
-		createBufferStrategy(2);
+		createBufferStrategy(5);
 		BufferStrategy strategy = getBufferStrategy();
 		while (_running) {
 	        Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
-	        repaint();
+	        
 			update(graphics);
-			repaint();
+			
 			
 			nextTick += SKIP_TICKS;
 			sleepTime = nextTick - (System.currentTimeMillis());
@@ -85,7 +85,6 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 			}
 	        graphics.dispose();
 	        strategy.show();
-
 		}
 	}
 
