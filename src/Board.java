@@ -29,7 +29,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	public static final int LEFT_MARGIN_WIDTH = 256, TOP_MARGIN_HEIGHT = 64,
 			BORDER_WIDTH = 8, TOP_BORDER_HEIGHT = 32, BOTTOM_BORDER_HEIGHT = 8,
 			RIGHT_MARGIN_WIDTH = 64, BOTTOM_MARGIN_HEIGHT = 64;
-	public static final int FPS = 30, SKIP_TICKS = 1000 / FPS;
+	public static final int FPS = 60, SKIP_TICKS = 1000 / FPS;
 
 	private Grid _grid;
 	private BufferedImage _background;
@@ -66,7 +66,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		long nextTick = System.currentTimeMillis();
 		long sleepTime = 0;
 		_running = true;
-		createBufferStrategy(5);
+		createBufferStrategy(2);
 		BufferStrategy strategy = getBufferStrategy();
 		while (_running) {
 	        Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
