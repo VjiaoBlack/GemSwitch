@@ -36,9 +36,9 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	private Cursor _cursor;
 	private Font _font;
 
-	private boolean _running, _swapping;
+	private boolean _running, _swapping, _toScore;
 	private int _cursorGridX, _cursorGridY, _selectedGemX, _selectedGemY,
-			_score;
+			_score, _scoreupdate;
 
 	public Board() {
 		_grid = new Grid(6, 10);
@@ -61,6 +61,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 		_selectedGemX = _selectedGemY = -1;
 		_swapping = false;
 		_score = 0;
+		_scoreupdate = 0;
+		_toScore = false;
 	}
 
 	public void run() {
@@ -104,16 +106,20 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 
 		_grid.draw(g2);
 		_cursor.draw(g2);
+		
 		drawScore(g2);
 	}
 
 	public void update(Graphics2D g) {
 		_grid.update();
 		for (int x = 0; x < Grid.GRID_WIDTH; x++) {
-			_score += _grid.searchCol(x);
+			_scoreupdate += _grid.searchCol(x);
+			_toScore = _scoreupdate > 0;
 		}
-		for (int y = 0; y < Grid.GRID_HEIGHT; y++)
-			_score += _grid.searchRow(y);
+		for (int y = 0; y < Grid.GRID_HEIGHT; y++){
+			_scoreupdate += _grid.searchRow(y);
+			_toScore = _scoreupdate > 0;
+		}
 		_grid.removeGems();
 		_cursor.update();
 		_cursor.setGridCor(_cursorGridX, _cursorGridY);
@@ -140,6 +146,10 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 	
 	public void drawScore(Graphics2D g){
 		int digit;
+		if (_toScore){
+			_score += _scoreupdate;
+			_scoreupdate = 0;
+		}
 		String points = _score + 100000 + "";
 		for(int i = 1; i < 6; i++){
 			digit = Integer.parseInt(points.substring(i,i+1));
@@ -151,6 +161,8 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 					digit * 12, 0, (digit + 1) * 12, 16, null);
 			
 		}
+		
+		_toScore = false;
 	}
 
 	@Override
@@ -230,7 +242,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
 						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -= 20;
+				_scoreupdate -= 20;
 				_swapping = true;
 			} else if (_cursorGridX - _selectedGemX == 0
 					&& _cursorGridY - _selectedGemY == 1) {
@@ -241,7 +253,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
 						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -= 20;
+				_scoreupdate -= 20;
 				_swapping = true;
 			} else if (_cursorGridX - _selectedGemX == -1
 					&& _cursorGridY - _selectedGemY == 0) {
@@ -252,7 +264,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
 						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -= 20;
+				_scoreupdate -= 20;
 				_swapping = true;
 			} else if (_cursorGridX - _selectedGemX == 0
 					&& _cursorGridY - _selectedGemY == -1) {
@@ -263,7 +275,7 @@ public class Board extends Canvas implements MouseListener, KeyListener,
 				_grid.switchGems(_selectedGemX, _selectedGemY, _cursorGridX,
 						_cursorGridY);
 				_selectedGemX = _selectedGemY = -1;
-				_score -= 20;
+				_scoreupdate -= 20;
 				_swapping = true;
 
 			} else {
