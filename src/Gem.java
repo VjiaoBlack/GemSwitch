@@ -44,7 +44,7 @@ public class Gem {
 	}
 
 	public Gem(int x, int y) {
-		_type = TYPES[(int) (Math.random() * TYPES.length)];
+		_type = TYPES[(int) (Math.random() * (TYPES.length - 0))];
 		_xGridCor = x;
 		_yGridCor = y /* help */;
 		_yOffset =  (int) (Math.random() * 64) - (9 - y) * 64;
